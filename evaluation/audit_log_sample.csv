@@ -1,0 +1,8 @@
+agent_disposition,alert_id,analyst,applied_outcome,event,final_disposition,model,time_utc
+H,ADV-4001,analyst1,,TRIAGED,H,openai/gpt-oss-120b,2026-09-21 21:07:26
+H,ADV-4001,analyst1,H,APPROVED,H,,2026-09-21 21:07:53
+A,ALT-1002,analyst1,,TRIAGED,A,openai/gpt-oss-120b,2026-09-21 21:11:11
+H,ALT-2001,analyst1,,TRIAGED,H,openai/gpt-oss-120b,2026-09-21 21:13:26
+H,ALT-2001,analyst1,H,APPROVED,H,,2026-09-21 21:13:53
+E,ALT-3001,analyst1,,TRIAGED,E,openai/gpt-oss-120b,2026-09-21 21:14:41
+E,ALT-3001,analyst1,E,APPROVED,E,,2026-09-21 21:15:53
