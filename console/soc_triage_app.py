@@ -17,8 +17,25 @@ import requests
 import streamlit as st
 
 HERE = Path(__file__).parent
-CORPUS_PATH = HERE / "soc_alert_corpus.json"
-DEFAULT_WEBHOOK = "https://n8n-production-c001.up.railway.app/webhook/soc-triage"
+
+# The corpus sits beside this script when run locally, and in ../data/ in the repository.
+CORPUS_PATH = next(
+    (c for c in (HERE / "soc_alert_corpus.json",
+                 HERE.parent / "data" / "soc_alert_corpus.json") if c.exists()),
+    HERE / "soc_alert_corpus.json")
+
+
+def _secret(name: str, default: str = "") -> str:
+    """Read a Streamlit secret, tolerating the no-secrets-file case."""
+    try:
+        return str(st.secrets.get(name, default))
+    except Exception:
+        return default
+
+
+DEFAULT_WEBHOOK = _secret(
+    "N8N_WEBHOOK", "https://n8n-production-c001.up.railway.app/webhook/soc-triage")
+SECRET_KEY = _secret("SOC_KEY")
 
 DISPOSITIONS = {
     "A": ("Closed automatically", "Every guardrail passed, so the agents closed this alert and logged why.", "#2E6A4F"),
@@ -118,8 +135,12 @@ with st.sidebar:
     webhook = st.text_input("n8n workflow address", DEFAULT_WEBHOOK,
                             help="Published workflow: /webhook/soc-triage. Testing in the editor: /webhook-test/soc-triage")
     st.session_state.analyst = st.text_input("Your name (for the audit log)", "analyst1")
-    api_key = st.text_input("Workflow key", type="password",
-                            help="The X-SOC-Key value set on the webhook node in n8n.")
+    if SECRET_KEY:
+        api_key = SECRET_KEY
+        st.caption("Connected — workflow key supplied by the host.")
+    else:
+        api_key = st.text_input("Workflow key", type="password",
+                                help="The X-SOC-Key value set on the webhook node in n8n.")
     st.divider()
     st.subheader("Audit log")
     if st.session_state.audit:
